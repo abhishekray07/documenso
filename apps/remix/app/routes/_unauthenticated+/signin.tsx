@@ -91,7 +91,7 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
         </h1>
 
         <p className="mt-2 text-sm text-muted-foreground">
-          <Trans>Welcome back, we are lucky to have you.</Trans>
+          <Trans>Welcome back! Sign in to manage your documents.</Trans>
         </p>
         <hr className="-mx-6 my-4" />
 
@@ -116,6 +116,20 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
             </Trans>
           </p>
         )}
+
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          <Trans>
+            Need help?{' '}
+            <a
+              href="https://documenso.com/support"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-documenso-700 duration-200 hover:opacity-70"
+            >
+              Contact support
+            </a>
+          </Trans>
+        </p>
       </div>
     </div>
   );
