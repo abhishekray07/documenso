@@ -104,9 +104,9 @@ export const EnvelopesBulkMoveDialog = ({
 
       // Invalidate the appropriate query based on envelope type.
       if (isDocument) {
-        await trpcUtils.document.findDocumentsInternal.invalidate();
-      } else {
         await trpcUtils.template.findTemplates.invalidate();
+      } else {
+        await trpcUtils.document.findDocumentsInternal.invalidate();
       }
 
       toast({
