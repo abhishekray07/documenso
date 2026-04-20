@@ -129,7 +129,7 @@ export const FolderMoveDialog = ({
         </DialogHeader>
 
         <div className="relative">
-          <Search className="text-muted-foreground absolute left-2 top-3 h-4 w-4" />
+          <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={t`Search folders...`}
             value={searchTerm}
@@ -163,7 +163,6 @@ export const FolderMoveDialog = ({
                           filteredFolders.map((f) => (
                             <Button
                               key={f.id}
-                              type="button"
                               disabled={f.id === folder?.parentId}
                               variant={field.value === f.id ? 'default' : 'outline'}
                               className="w-full justify-start"

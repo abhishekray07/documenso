@@ -66,7 +66,7 @@ const Combobox = ({
             <Trans>No value found.</Trans>
           </CommandEmpty>
 
-          <CommandGroup className="max-h-[250px] overflow-y-auto">
+          <CommandGroup>
             {options.map((option, index) => (
               <CommandItem key={index} onSelect={() => onOptionSelected(option)}>
                 <Check
