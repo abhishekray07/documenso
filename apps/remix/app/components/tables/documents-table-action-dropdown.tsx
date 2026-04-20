@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -18,6 +19,7 @@ import {
   Share,
   Trash2,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react/dist/lucide-react';
 import { Link } from 'react-router';
 
 import { useSession } from '@documenso/lib/client-only/providers/session';
@@ -45,6 +47,30 @@ import { useCurrentTeam } from '~/providers/team';
 
 import { EnvelopeDownloadDialog } from '../dialogs/envelope-download-dialog';
 import { EnvelopeRenameDialog } from '../dialogs/envelope-rename-dialog';
+
+type DropdownActionProps = {
+  icon: LucideIcon;
+  label: ReactNode;
+  onAction: () => void;
+  preventCloseOnSelect?: boolean;
+};
+
+const DropdownAction = ({
+  icon: Icon,
+  label,
+  onAction,
+  preventCloseOnSelect,
+}: DropdownActionProps) => {
+  return (
+    <DropdownMenuItem
+      onClick={onAction}
+      onSelect={preventCloseOnSelect ? (e) => e.preventDefault() : undefined}
+    >
+      <Icon className="mr-2 h-4 w-4" />
+      {label}
+    </DropdownMenuItem>
+  );
+};
 
 export type DocumentsTableActionDropdownProps = {
   row: TDocumentRow;
@@ -143,10 +169,11 @@ export const DocumentsTableActionDropdown = ({
         </DropdownMenuItem>
 
         {canManageDocument && canTitleBeChanged && (
-          <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
-            <Pencil className="mr-2 h-4 w-4" />
-            <Trans>Rename</Trans>
-          </DropdownMenuItem>
+          <DropdownAction
+            icon={Pencil}
+            label={<Trans>Rename</Trans>}
+            onAction={() => setSaveAsTemplateDialogOpen(true)}
+          />
         )}
 
         <EnvelopeDownloadDialog
@@ -176,16 +203,19 @@ export const DocumentsTableActionDropdown = ({
           }
         />
 
-        <DropdownMenuItem onClick={() => setSaveAsTemplateDialogOpen(true)}>
-          <FileOutputIcon className="mr-2 h-4 w-4" />
-          <Trans>Save as Template</Trans>
-        </DropdownMenuItem>
+        <DropdownAction
+          icon={FileOutputIcon}
+          label={<Trans>Save as Template</Trans>}
+          onAction={() => setSaveAsTemplateDialogOpen(true)}
+        />
 
         {onMoveDocument && canManageDocument && (
-          <DropdownMenuItem onClick={onMoveDocument} onSelect={(e) => e.preventDefault()}>
-            <FolderInput className="mr-2 h-4 w-4" />
-            <Trans>Move to Folder</Trans>
-          </DropdownMenuItem>
+          <DropdownAction
+            icon={FolderInput}
+            label={<Trans>Move to Folder</Trans>}
+            onAction={onMoveDocument}
+            preventCloseOnSelect
+          />
         )}
 
         {/* No point displaying this if there's no functionality. */}
