@@ -100,10 +100,6 @@ export const EnvelopeSaveAsTemplateDialog = ({
         }
 
         setOpen(value);
-
-        if (!value) {
-          form.reset();
-        }
       }}
     >
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}

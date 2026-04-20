@@ -76,7 +76,7 @@ export const MultiSignDocumentSigningView = ({
   const { data: document, isLoading } = trpc.embeddingPresign.getMultiSignDocument.useQuery(
     { token },
     {
-      staleTime: 0,
+      staleTime: Infinity,
     },
   );
 
