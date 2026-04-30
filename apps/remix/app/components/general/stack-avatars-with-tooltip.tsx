@@ -70,7 +70,7 @@ export const StackAvatarsWithTooltip = ({
         side: position,
       }}
     >
-      {completedRecipients.length > 0 && (
+      {completedRecipients.length && (
         <div>
           <h1 className="text-base font-medium">
             <Trans>Completed</Trans>
