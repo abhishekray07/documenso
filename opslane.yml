@@ -32,6 +32,7 @@ dev_command: npm run dev:remix
 health_path: /signin
 compose_file: docker/development/compose.yml
 schema_command: npm run prisma:migrate-dev
+seed_command: npm run prisma:seed
 install_command: npm install --legacy-peer-deps
 compose_services: database redis minio inbucket
 generate_command: npm run prisma:generate
