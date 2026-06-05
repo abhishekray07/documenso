@@ -38,3 +38,9 @@ compose_services: database redis minio inbucket
 generate_command: npm run prisma:generate
 pre_boot_commands:
   - cp /home/user/repo/.env.example /home/user/repo/.env || true
+verify_setup:
+  instructions: |
+    Seeded auth uses admin@documenso.com / password and the seed creates editable documents for browser verification.
+    For envelope editor acceptance criteria, start at /documents after login, find the seeded "Envelope Full Field Test" draft row, and open it with the row's Edit action.
+    If the documents page redirects to a team URL such as /t/personal_.../documents, stay on that team URL and open the editor from there.
+    The target editor route is the authenticated team document edit page (/t/:teamUrl/documents/:id/edit); wait for the envelope editor canvas/PDF page to render before selecting fields or pressing Delete/Backspace.
