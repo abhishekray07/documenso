@@ -38,6 +38,8 @@ compose_services: database redis minio inbucket
 generate_command: npm run prisma:generate
 pre_boot_commands:
   - cp /home/user/repo/.env.example /home/user/repo/.env || true
+auth:
+  session_command: node scripts/opslane-session.cjs
 verify_setup:
   instructions: |
     Seeded auth uses admin@documenso.com / password and the seed creates editable documents for browser verification.
