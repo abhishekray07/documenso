@@ -1,43 +1,27 @@
 port: 3000
-notes: Documenso is a React Router v7 (Remix) monorepo. The .env file must be
-  present at the repo root before install. The dev server takes ~30-60s to
-  compile on first start. The root path / redirects to /signin which returns
-  200. The Gotenberg service (DOCX conversion) is skipped as it requires a
-  custom Docker image build; DOCX uploads will be disabled.
-env_vars:
-  PORT: "3000"
-  NEXTAUTH_SECRET: 2f20b5616f08a58158b290b84dd78ced44dca85eef4e4451cbaeccfec5ee4ca4
-  NEXT_PRIVATE_REDIS_URL: redis://localhost:63790
-  NEXT_PRIVATE_SMTP_HOST: localhost
-  NEXT_PRIVATE_SMTP_PORT: "2500"
-  NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-  NEXT_PRIVATE_DATABASE_URL: postgres://documenso:password@127.0.0.1:54320/documenso
-  NEXT_PRIVATE_UPLOAD_BUCKET: documenso
-  NEXT_PRIVATE_UPLOAD_REGION: us-east-1
-  NEXT_PRIVATE_ENCRYPTION_KEY: 2137bae0918b537b353d9dede6935d6b2993473d40a96aad57b0b438bbc6e5ec
-  NEXT_PRIVATE_SMTP_FROM_NAME: Documenso
-  NEXT_PRIVATE_UPLOAD_ENDPOINT: http://localhost:9002
-  NEXT_PRIVATE_UPLOAD_TRANSPORT: s3
-  NEXT_PRIVATE_SIGNING_TRANSPORT: local
-  NEXT_PRIVATE_SMTP_FROM_ADDRESS: noreply@documenso.com
-  NEXT_PRIVATE_DIRECT_DATABASE_URL: postgres://documenso:password@127.0.0.1:54320/documenso
-  NEXT_PRIVATE_INTERNAL_WEBAPP_URL: http://localhost:3000
-  NEXT_PRIVATE_UPLOAD_ACCESS_KEY_ID: documenso
-  NEXT_PRIVATE_SMTP_UNSAFE_IGNORE_TLS: "true"
-  NEXT_PRIVATE_UPLOAD_FORCE_PATH_STYLE: "true"
-  NEXT_PRIVATE_ENCRYPTION_SECONDARY_KEY: e84093baee5dcd5e7b638bff7695ec21a1ef2d18afcf794c5aa3098d1d40b75a
-  NEXT_PRIVATE_UPLOAD_SECRET_ACCESS_KEY: password
-boot_mode: compose_then_dev
-dev_command: npm run dev:remix
+dockerfile: docker/Dockerfile
+services: [postgres, redis, s3, smtp]
 health_path: /signin
-compose_file: docker/development/compose.yml
-schema_command: npm run prisma:migrate-dev
-seed_command: npm run prisma:seed
-install_command: npm install --legacy-peer-deps
-compose_services: database redis minio inbucket
-generate_command: npm run prisma:generate
-pre_boot_commands:
-  - cp /home/user/repo/.env.example /home/user/repo/.env || true
+env:
+  NODE_ENV: production
+  NEXTAUTH_SECRET: 2f20b5616f08a58158b290b84dd78ced44dca85eef4e4451cbaeccfec5ee4ca4
+  NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
+  NEXT_PRIVATE_DATABASE_URL: postgres://app:app@pg:5432/app
+  NEXT_PRIVATE_DIRECT_DATABASE_URL: postgres://app:app@pg:5432/app
+  NEXT_PRIVATE_REDIS_URL: redis://redis:6379
+  NEXT_PRIVATE_ENCRYPTION_KEY: 2137bae0918b537b353d9dede6935d6b2993473d40a96aad57b0b438bbc6e5ec
+  NEXT_PRIVATE_ENCRYPTION_SECONDARY_KEY: e84093baee5dcd5e7b638bff7695ec21a1ef2d18afcf794c5aa3098d1d40b75a
+  NEXT_PRIVATE_SMTP_HOST: smtp
+  NEXT_PRIVATE_SMTP_PORT: "2500"
+  NEXT_PRIVATE_SMTP_UNSAFE_IGNORE_TLS: "true"
+  NEXT_PRIVATE_SIGNING_TRANSPORT: local
+  NEXT_PRIVATE_UPLOAD_TRANSPORT: s3
+  NEXT_PRIVATE_UPLOAD_ENDPOINT: http://minio:9000
+  NEXT_PRIVATE_UPLOAD_BUCKET: app-bucket
+  NEXT_PRIVATE_UPLOAD_REGION: us-east-1
+  NEXT_PRIVATE_UPLOAD_ACCESS_KEY_ID: app
+  NEXT_PRIVATE_UPLOAD_SECRET_ACCESS_KEY: appsecret
+  NEXT_PRIVATE_UPLOAD_FORCE_PATH_STYLE: "true"
 auth:
   session_command: node scripts/opslane-session.cjs
 verify_setup:
