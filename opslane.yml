@@ -30,7 +30,7 @@ seed: |
   SERVER_PID=$!
   READY=""
   for i in $(seq 1 45); do
-    if curl -fsS http://localhost:3000/api/auth/csrf > /dev/null 2>&1; then READY=1; break; fi
+    if node -e 'fetch("http://localhost:3000/api/auth/csrf").then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))' > /dev/null 2>&1; then READY=1; break; fi
     sleep 2
   done
   if [ -z "$READY" ]; then echo "SEED_FAIL: app never became ready"; tail -50 /tmp/seed-server.log; exit 1; fi
