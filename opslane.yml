@@ -22,11 +22,57 @@ env:
   NEXT_PRIVATE_UPLOAD_ACCESS_KEY_ID: app
   NEXT_PRIVATE_UPLOAD_SECRET_ACCESS_KEY: appsecret
   NEXT_PRIVATE_UPLOAD_FORCE_PATH_STYLE: "true"
+seed: |
+  set -e
+  cd /app/apps/remix
+  npx prisma migrate deploy --schema ../../packages/prisma/schema.prisma
+  HOSTNAME=0.0.0.0 PORT=3000 node build/server/main.js > /tmp/seed-server.log 2>&1 &
+  SERVER_PID=$!
+  READY=""
+  for i in $(seq 1 45); do
+    if curl -fsS http://localhost:3000/api/auth/csrf > /dev/null 2>&1; then READY=1; break; fi
+    sleep 2
+  done
+  if [ -z "$READY" ]; then echo "SEED_FAIL: app never became ready"; tail -50 /tmp/seed-server.log; exit 1; fi
+  node -e '
+    const main = async () => {
+      const res = await fetch("http://localhost:3000/api/auth/email-password/signup", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: "Opslane Admin", email: "admin@documenso.com", password: "OpslaneVerify123!" }),
+      });
+      console.log("SEED: signup status", res.status, (await res.text()).slice(0, 200));
+    };
+    main().catch((err) => { console.error("SEED: signup request failed:", err.message); });
+  '
+  node -e '
+    const { PrismaClient } = require("@prisma/client");
+    const bcrypt = require("@node-rs/bcrypt");
+    const prisma = new PrismaClient();
+    prisma.user.update({
+      where: { email: "admin@documenso.com" },
+      data: { emailVerified: new Date(), password: bcrypt.hashSync("password") },
+    })
+      .then((user) => { console.log("SEED_OK: user", user.id, "verified, password aligned"); return prisma.$disconnect(); })
+      .catch((err) => { console.error("SEED_FAIL:", err.message); process.exit(1); });
+  '
+  kill $SERVER_PID 2> /dev/null || true
 auth:
   session_command: node scripts/opslane-session.cjs
 verify_setup:
   instructions: |
-    Seeded auth uses admin@documenso.com / password and the seed creates editable documents for browser verification.
-    For envelope editor acceptance criteria, start at /documents after login, find the seeded "Envelope Full Field Test" draft row, and open it with the row's Edit action.
-    If the documents page redirects to a team URL such as /t/personal_.../documents, stay on that team URL and open the editor from there.
-    The target editor route is the authenticated team document edit page (/t/:teamUrl/documents/:id/edit); wait for the envelope editor canvas/PDF page to render before selecting fields or pressing Delete/Backspace.
+    Log in as admin@documenso.com / password (seeded during boot via the app's
+    own signup API; the personal organisation and team are created
+    automatically). After login the documents page may redirect to a team URL
+    such as /t/personal_.../documents — stay on that team URL.
+    No documents are pre-seeded: when an acceptance criterion needs a document
+    or template, create it through the UI first (upload any small PDF via the
+    documents page) and wait for the editor canvas/PDF to render before
+    interacting with fields.
+notes: |
+  Dockerfile-first config. The production image self-migrates on boot
+  (docker/start.sh runs prisma migrate deploy). The seed one-shot runs before
+  app boot: it migrates, briefly starts the server, creates the admin user via
+  the app's signup API (so the organisation/team graph is built by app code,
+  not raw SQL), then marks the email verified and aligns the password with the
+  stored verifier credentials.
