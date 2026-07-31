@@ -31,7 +31,6 @@ export default function EnvelopeEditorPage({ params }: Route.ComponentProps) {
     },
     {
       retry: false,
-      gcTime: 0,
       ...DO_NOT_INVALIDATE_QUERY_ON_MUTATION,
     },
   );
