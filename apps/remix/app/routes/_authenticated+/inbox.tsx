@@ -20,8 +20,18 @@ export default function InboxPage() {
           <Trans>Personal Inbox</Trans>
         </h1>
         <p className="mt-1 text-muted-foreground">
-          <Trans>Any documents that you have been invited to will appear here</Trans>
+          <Trans>
+            Manage your pending documents and signature requests below.
+          </Trans>
         </p>
+
+        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-blue-900 dark:bg-blue-950">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <Trans>
+              Tip: You can use keyboard shortcut <kbd className="rounded border border-blue-300 bg-blue-100 px-1.5 py-0.5 font-mono text-xs dark:border-blue-800 dark:bg-blue-900">?</kbd> anywhere to view all available shortcuts.
+            </Trans>
+          </p>
+        </div>
 
         <OrganisationInvitations className="mt-4" />
       </div>
